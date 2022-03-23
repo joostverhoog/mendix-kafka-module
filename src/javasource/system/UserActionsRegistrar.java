@@ -1,53 +1,40 @@
 package system;
 
-import org.osgi.service.event.Event;
-import org.osgi.service.event.EventHandler;
+import com.mendix.core.actionmanagement.IActionRegistrator;
 
-import aQute.bnd.annotation.component.Component;
-import aQute.bnd.annotation.component.Reference;
-
-import com.mendix.core.Core;
-import com.mendix.core.component.LocalComponent;
-import com.mendix.core.component.MxRuntime;
-import com.mendix.integration.Integration;
-
-@Component(immediate = true, properties = {"event.topics:String=com/mendix/events/model/loaded"})
-public class UserActionsRegistrar implements EventHandler
+public class UserActionsRegistrar
 {
-	private MxRuntime mxRuntime;
-	private LocalComponent component;
-	private Integration integration;
-	
-	@Reference
-	public void setMxRuntime(MxRuntime runtime)
-	{
-		mxRuntime = runtime;
-		mxRuntime.bundleComponentLoaded();
-	}
-	
-	@Reference
-	public void setIntegration(Integration integration)
-	{
-		this.integration = integration;
-	}
-	
-	@Override
-	public void handleEvent(Event event)
-	{
-		if (event.getTopic().equals(com.mendix.core.event.EventConstants.ModelLoadedTopic()))        
-		{
-			component = mxRuntime.getMainComponent();
-			Core.initialize(component, integration);   
-			component.actionRegistry().registerUserAction(kafkamodule.actions.Send.class);
-			component.actionRegistry().registerUserAction(kafkamodule.actions.StartConsumer.class);
-			component.actionRegistry().registerUserAction(kafkamodule.actions.StartFilteredProcessor.class);
-			component.actionRegistry().registerUserAction(kafkamodule.actions.StartProcessor.class);
-			component.actionRegistry().registerUserAction(kafkamodule.actions.StartProducer.class);
-			component.actionRegistry().registerUserAction(kafkamodule.actions.StopAll.class);
-			component.actionRegistry().registerUserAction(kafkamodule.actions.StopConsumer.class);
-			component.actionRegistry().registerUserAction(kafkamodule.actions.StopProcessor.class);
-			component.actionRegistry().registerUserAction(kafkamodule.actions.StopProducer.class);
-			component.actionRegistry().registerUserAction(system.actions.VerifyPassword.class);
-		}
-	}
+  public void registerActions(IActionRegistrator registrator)
+  {
+    registrator.bundleComponentLoaded();
+    registrator.registerUserAction(encryption.actions.DecryptString.class);
+    registrator.registerUserAction(encryption.actions.EncryptString.class);
+    registrator.registerUserAction(encryption.actions.GeneratePGPKeyRing.class);
+    registrator.registerUserAction(encryption.actions.PGPDecryptDocument.class);
+    registrator.registerUserAction(encryption.actions.PGPEncryptDocument.class);
+    registrator.registerUserAction(encryption.actions.ValidatePrivateKeyRing.class);
+    registrator.registerUserAction(kafka.actions.GetMessagesFromOffset.class);
+    registrator.registerUserAction(kafka.actions.GetPartitionOffsets.class);
+    registrator.registerUserAction(kafka.actions.GetPosition.class);
+    registrator.registerUserAction(kafka.actions.ListTopics.class);
+    registrator.registerUserAction(kafka.actions.SendAsynchronous.class);
+    registrator.registerUserAction(kafka.actions.SendSynchronous.class);
+    registrator.registerUserAction(kafka.actions.StartConsumer.class);
+    registrator.registerUserAction(kafka.actions.StartFilteredProcessor.class);
+    registrator.registerUserAction(kafka.actions.StartProcessor.class);
+    registrator.registerUserAction(kafka.actions.StartProducer.class);
+    registrator.registerUserAction(kafka.actions.StopAll.class);
+    registrator.registerUserAction(kafka.actions.StopProcessor.class);
+    registrator.registerUserAction(kafka.actions.StopProducer.class);
+    registrator.registerUserAction(kafka.actions.StopWatchingObjects.class);
+    registrator.registerUserAction(kafka.actions.WatchObjectForChange.class);
+    registrator.registerUserAction(librarylogging.actions.AddLibraryLogListener.class);
+    registrator.registerUserAction(librarylogging.actions.InitializeLogging.class);
+    registrator.registerUserAction(librarylogging.actions.SetRootLevel.class);
+    registrator.registerUserAction(mxmodelreflection.actions.ReplaceToken.class);
+    registrator.registerUserAction(mxmodelreflection.actions.SyncObjects.class);
+    registrator.registerUserAction(mxmodelreflection.actions.TestThePattern.class);
+    registrator.registerUserAction(mxmodelreflection.actions.ValidateTokensInMessage.class);
+    registrator.registerUserAction(system.actions.VerifyPassword.class);
+  }
 }
